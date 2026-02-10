@@ -130,6 +130,12 @@ Detailed docs in [`docs/`](./docs/):
 | 2 | Monetization (skins, ads, full auth) | Planned |
 | 3 | Competitive (ranked, leaderboards, anti-cheat) | Planned |
 
+## Author
+
+**Phil Dang**
+- Email: phucsystem@gmail.com
+- Website: [phucsystemlabs.com](https://phucsystemlabs.com)
+
 ## License
 
 All rights reserved.
