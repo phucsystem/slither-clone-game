@@ -20,6 +20,9 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     target: 60,
     forceSetTimeOut: false,
   },
+  dom: {
+    createContainer: true,
+  },
   render: {
     antialias: true,
     pixelArt: false,
