@@ -3,8 +3,8 @@ version: '3.8'
 services:
   frontend:
     build:
-      context: ./apps/client
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/client/Dockerfile
     container_name: snake-frontend
     ports:
       - "80:80"
@@ -18,8 +18,8 @@ services:
 
   backend:
     build:
-      context: ./apps/server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/server/Dockerfile
     container_name: snake-backend
     ports:
       - "3000:3000"

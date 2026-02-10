@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'snake-server',
-      script: './dist/server.js',
+      script: './dist/server/src/server.js',
       instances: 1,
       exec_mode: 'fork',
       env: {

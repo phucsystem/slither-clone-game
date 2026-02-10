@@ -3,8 +3,8 @@ version: '3.8'
 services:
   backend:
     build:
-      context: ./apps/server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/server/Dockerfile
     command: npm run dev
     environment:
       - NODE_ENV=development

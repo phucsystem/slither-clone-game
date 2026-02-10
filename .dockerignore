@@ -1,0 +1,12 @@
+**/node_modules
+**/dist
+**/.cache
+.git
+.claude
+.env
+.env.*
+*.log
+repomix-output.xml
+plans
+docs
+prototypes
