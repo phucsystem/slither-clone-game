@@ -10,6 +10,7 @@ export class Snake {
   private eyeRight: Phaser.GameObjects.Arc;
   private pupilLeft: Phaser.GameObjects.Arc;
   private pupilRight: Phaser.GameObjects.Arc;
+  private nameText: Phaser.GameObjects.Text;
   private skinColors: number[];
   private isLocal: boolean;
 
@@ -22,6 +23,17 @@ export class Snake {
     this.headSprite = scene.add.image(state.segments[0].x, state.segments[0].y, 'snake-head');
     this.headSprite.setTint(this.skinColors[0]);
     this.headSprite.setDepth(10);
+
+    // Username label above head
+    const displayName = state.username.length > 12 ? state.username.slice(0, 12) + '...' : state.username;
+    this.nameText = scene.add.text(state.segments[0].x, state.segments[0].y - 30, displayName, {
+      fontFamily: 'Rajdhani, sans-serif',
+      fontSize: '16px',
+      fontStyle: 'bold',
+      color: '#FFFFFF',
+      stroke: '#000000',
+      strokeThickness: 4,
+    }).setOrigin(0.5).setDepth(13);
 
     // Eyes
     this.eyeLeft = scene.add.circle(0, 0, 5, 0xffffff).setDepth(11);
@@ -48,6 +60,9 @@ export class Snake {
     if (state.segments.length > 0) {
       this.headSprite.setPosition(state.segments[0].x, state.segments[0].y);
       this.headSprite.setRotation(state.direction);
+
+      // Update name position above head
+      this.nameText.setPosition(state.segments[0].x, state.segments[0].y - 30);
 
       // Update eyes relative to head
       const eyeOffset = 8;
@@ -111,6 +126,7 @@ export class Snake {
 
   destroy(): void {
     this.headSprite.destroy();
+    this.nameText.destroy();
     this.eyeLeft.destroy();
     this.eyeRight.destroy();
     this.pupilLeft.destroy();

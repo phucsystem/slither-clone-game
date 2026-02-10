@@ -238,6 +238,26 @@ export class GameScene extends Phaser.Scene {
     `;
     document.body.appendChild(this.minimapCanvas);
 
+    // Instructions overlay (fades after 10s)
+    const instructionText = this.add.text(this.cameras.main.width / 2, 60,
+      'Mouse to steer  |  WASD for direction  |  Click or SPACE to boost', {
+      fontFamily: FONTS.body,
+      fontSize: '22px',
+      color: COLORS_CSS.textSecondary,
+      backgroundColor: 'rgba(10,14,26,0.75)',
+      padding: { x: 20, y: 10 },
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(100);
+
+    this.time.delayedCall(10000, () => {
+      this.tweens.add({
+        targets: instructionText,
+        alpha: 0,
+        duration: 1000,
+        ease: 'Power2',
+        onComplete: () => instructionText.destroy(),
+      });
+    });
+
     // Kill notification
     this.killNotification = this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 3, '', {
       fontFamily: FONTS.heading,

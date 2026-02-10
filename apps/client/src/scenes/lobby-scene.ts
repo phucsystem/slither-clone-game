@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { COLORS, COLORS_CSS, FONTS } from '../config/design-tokens';
+import { COLORS, COLORS_CSS, FONTS, SNAKE_SKINS } from '../config/design-tokens';
 import { NetworkManager } from '../managers/network-manager';
 
 export class LobbyScene extends Phaser.Scene {
@@ -75,6 +75,14 @@ export class LobbyScene extends Phaser.Scene {
       color: COLORS_CSS.danger,
     }).setOrigin(0.5);
 
+    // Author credit
+    const screenHeight = this.cameras.main.height;
+    this.add.text(centerX, screenHeight - 40, 'by Phil Dang  |  phucsystemlabs.com', {
+      fontFamily: FONTS.body,
+      fontSize: '16px',
+      color: COLORS_CSS.textMuted,
+    }).setOrigin(0.5);
+
     // Enter key to play
     this.input.keyboard!.on('keydown-ENTER', () => {
       this.handlePlay();
@@ -131,7 +139,9 @@ export class LobbyScene extends Phaser.Scene {
     network.connect();
 
     network.once('connected', () => {
-      network.joinRoom(username, 'classic-blue');
+      const skinKeys = Object.keys(SNAKE_SKINS);
+      const randomSkin = skinKeys[Math.floor(Math.random() * skinKeys.length)];
+      network.joinRoom(username, randomSkin);
     });
 
     network.once('room-joined', (data: any) => {

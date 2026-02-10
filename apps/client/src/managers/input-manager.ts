@@ -19,6 +19,14 @@ export class InputManager {
     scene.input.keyboard!.on('keyup-SPACE', () => {
       this.boostActive = false;
     });
+
+    // Mouse click for boost
+    scene.input.on('pointerdown', () => {
+      this.boostActive = true;
+    });
+    scene.input.on('pointerup', () => {
+      this.boostActive = false;
+    });
   }
 
   setSnakeHeadPosition(x: number, y: number): void {
