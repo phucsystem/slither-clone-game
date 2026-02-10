@@ -79,6 +79,7 @@ apps/
 **Game Loop** (60Hz per room):
 - **RoomManager**: Create/destroy rooms, auto-assign players
 - **SnakeManager**: Track position, direction, boost, length
+- **BotManager**: Spawn up to 4 AI snakes (7s intervals), edge avoidance, smart direction changes
 - **FoodSpawner**: Generate 500-800 food/room, respawn 1-3s after collection
 - **CollisionEngine**: Head-to-body (circle), head-to-head (larger wins), head-to-food
 - **LeaderboardManager**: Top 10 per room, throttled broadcast
@@ -121,12 +122,13 @@ apps/
 
 | Category | Files | Est. LOC |
 |----------|-------|---------|
-| Server TypeScript | 21 | 1,200 |
-| Client TypeScript | 14 | 1,100 |
-| Shared Types | 2 | 150 |
+| Server TypeScript | 22 | 1,974 |
+| Client TypeScript | 14 | 1,371 |
+| Shared Types | 2 | 175 |
 | SQL Migrations | 1 | 80 |
 | Docker | 3 | 150 |
-| **Total** | **41** | **2,680** |
+| Configs | 7 | 142 |
+| **Total** | **49** | **3,892** |
 
 ---
 
@@ -159,10 +161,13 @@ All FR-01 through FR-07 implemented:
 - [x] FR-05: Real-time leaderboard (1Hz broadcast)
 - [x] FR-06: Death screen with stats
 - [x] FR-07: Network interpolation + client prediction
+- [x] **NEW**: AI bots (BotManager) with edge avoidance & smart pathfinding
 
 **Tests**: Jest unit tests for collision, room management, game loop (critical paths)
 
-**Deployment**: Docker Compose stack with 5 services, nginx reverse proxy, SSL ready
+**Deployment**: Docker Compose stack (multi-stage builds, repo root context), nginx proxy, SSL ready
+
+**Key New File**: `apps/server/src/game/bot-manager.ts` (228 LOC) — AI snake behaviors
 
 ---
 

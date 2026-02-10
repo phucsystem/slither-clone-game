@@ -15,12 +15,13 @@
 
 | Metric | Status |
 |--------|--------|
-| Core gameplay features | 7/7 (100%) |
+| Core gameplay features | 7/7 + AI bots (100%) |
+| AI bots per room | 4 max (gradual spawning) |
 | Game loop performance | 60 Hz server tick, <5ms per update |
 | Network latency | 20 Hz state sync, <100ms acceptable |
 | Client FPS target | 60 FPS on 2018+ hardware |
-| Player capacity per room | 50 concurrent players |
-| Deployment | Docker Compose (5 services) |
+| Player capacity per room | 50 concurrent players (including bots) |
+| Deployment | Docker Compose (5 services, multi-stage builds) |
 | Code coverage | Critical paths tested (collision, validation) |
 | Documentation | Complete (codebase, architecture, standards) |
 
@@ -245,6 +246,31 @@
 - [x] Client prediction latency <50ms
 - [x] No rubber-banding on server ack
 - [x] Extrapolation works for >100ms lag
+
+---
+
+### 4.8 FR-08: AI Bot Opponents (NEW - Phase 1 Extension)
+
+**Status:** ✓ Complete
+
+**Requirement:**
+- Spawn up to 4 AI snakes per room (gradually at 7s intervals)
+- AI behaviors: edge avoidance, direction changes, opportunistic boosting
+- Bots use existing Snake API (appear as regular players to clients)
+
+**Implementation:**
+- BotManager service (228 LOC)
+- Edge avoidance: 400px margin from map edges
+- Direction changes: 1-3s intervals with smooth transitions (0.1 rad/tick)
+- Boost logic: 2% chance per check, 5s minimum cooldown
+- 12 hardcoded bot names (Slithery Sam, Danger Noodle, etc.)
+
+**Acceptance Criteria:**
+- [x] Bots spawn gradually without network lag
+- [x] Bots never exit map bounds
+- [x] Bots appear as normal players on leaderboard
+- [x] No performance impact on 60Hz game loop
+- [x] Bots clean up on room destruction
 
 ---
 

@@ -43,6 +43,7 @@
 │  │  Game Loop (60Hz)                                        │   │
 │  │  ├─ RoomManager: Create/destroy rooms                    │   │
 │  │  ├─ SnakeManager: Position, direction, boost, length     │   │
+│  │  ├─ BotManager: AI snake behaviors + edge avoidance      │   │
 │  │  ├─ FoodSpawner: Generation & collection                 │   │
 │  │  ├─ CollisionEngine: Head-to-body, head-to-head, food    │   │
 │  │  └─ LeaderboardManager: Top 10 per room (1Hz)            │   │
@@ -152,7 +153,38 @@ NetworkManager.emit('player-input', {
    - If room empty: destroy, clear Redis keys
 ```
 
-### 2.3 Collision & Death Flow
+### 2.3 AI Bot Lifecycle
+
+```
+Room creation at 0ms:
+    ▼
+BotManager.update() runs every tick (60Hz)
+  ├─ T=0ms: No bots spawned yet
+  ├─ T=7000ms: Spawn Bot 1 (random name, random skin)
+  ├─ T=14000ms: Spawn Bot 2
+  ├─ T=21000ms: Spawn Bot 3
+  ├─ T=28000ms: Spawn Bot 4 (max reached)
+  │
+  ├─ For each bot, updateBotAI():
+  │  ├─ Check proximity to edges (400px margin)
+  │  ├─ If edge detected: Set targetDirection away from edge
+  │  ├─ Else: Random direction change (1-3s interval)
+  │  ├─ Smooth turn: 0.1 rad/tick toward target
+  │  └─ Boost: 2% chance per check, 5s cooldown
+  │
+  └─ Queue bot input to SnakeManager
+    ▼
+On bot death:
+  - Bot removed from BotManager.bots map
+  - Name recycled for future spawns
+  - Snake converted to food (normal collision flow)
+    ▼
+On room destruction:
+  - BotManager.cleanup() removes all bots
+  - All bot names freed
+```
+
+### 2.4 Collision & Death Flow
 
 ```
 Server GameLoop (60Hz):
@@ -161,7 +193,7 @@ CollisionEngine.tick():
   ├─ Check head vs all food
   │  └─ Food collected? Add length, respawn food, increment kills
   │
-  ├─ Check head vs all bodies (self + others)
+  ├─ Check head vs all bodies (self + others, including bots)
   │  └─ Head inside body? → DEATH (snake becomes food)
   │
   └─ Check head vs head
@@ -235,6 +267,7 @@ WebSocket Layer (Socket.IO)
 Game Logic Layer (60Hz Loop)
 ├─ RoomManager: Room lifecycle
 ├─ SnakeManager: Snake state (position, direction, boost)
+├─ BotManager: AI snake spawning & behavior (gradual 7s spawn, edge avoidance)
 ├─ FoodSpawner: Spawn logic (500-800 per room, 4 rarities)
 ├─ CollisionEngine: Authoritative collision detection
 └─ LeaderboardManager: Top 10 computation & broadcast
