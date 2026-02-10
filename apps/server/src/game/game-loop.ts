@@ -81,8 +81,9 @@ export class GameLoop {
     const deltaTime = 1 / SERVER_TICK_RATE;
     state.tickCount++;
 
-    // Update bot AI
+    // Update bot AI and bonus food spawning
     state.botManager.update();
+    state.foodSpawner.update();
 
     // Update snake positions
     state.snakeManager.updateAll(deltaTime);

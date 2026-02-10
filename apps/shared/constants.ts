@@ -35,12 +35,18 @@ export const FOOD_COLOR_WEIGHTS = {
 } as const;
 
 // Food values per color
-export const FOOD_VALUES = {
+export const FOOD_VALUES: Record<string, number> = {
   white: 1,
   green: 2,
   blue: 3,
   gold: 5,
-} as const;
+  rainbow: 25,
+};
+
+// Bonus food config
+export const BONUS_FOOD_RADIUS = 16;
+export const BONUS_FOOD_SPAWN_INTERVAL_MS = 15000; // every 15s
+export const MAX_BONUS_FOOD = 5;
 
 // Network
 export const INTERPOLATION_LERP = 0.12;

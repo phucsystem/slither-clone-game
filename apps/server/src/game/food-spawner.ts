@@ -9,12 +9,17 @@ import {
   FOOD_VALUES,
   FOOD_RESPAWN_MIN_MS,
   FOOD_RESPAWN_MAX_MS,
+  BONUS_FOOD_RADIUS,
+  BONUS_FOOD_SPAWN_INTERVAL_MS,
+  MAX_BONUS_FOOD,
 } from '../../../shared/constants';
 import type { FoodItem, FoodColor, SnakeSegment } from '../../../shared/types';
 
 export class FoodSpawner {
   private food = new Map<string, FoodItem>();
   private respawnTimers: ReturnType<typeof setTimeout>[] = [];
+  private nextBonusSpawnTime = Date.now() + BONUS_FOOD_SPAWN_INTERVAL_MS;
+  private bonusFoodCount = 0;
 
   initializeFood(): void {
     const count = MIN_FOOD_PER_ROOM + Math.floor(Math.random() * (MAX_FOOD_PER_ROOM - MIN_FOOD_PER_ROOM));
@@ -38,9 +43,36 @@ export class FoodSpawner {
     return foodItem;
   }
 
+  /** Call each tick to spawn bonus food periodically */
+  update(): void {
+    const now = Date.now();
+    if (now >= this.nextBonusSpawnTime && this.bonusFoodCount < MAX_BONUS_FOOD) {
+      this.spawnBonusFood();
+      this.nextBonusSpawnTime = now + BONUS_FOOD_SPAWN_INTERVAL_MS;
+    }
+  }
+
+  private spawnBonusFood(): void {
+    const margin = 200;
+    const foodItem: FoodItem = {
+      id: uuidv4().slice(0, 12),
+      x: margin + Math.random() * (MAP_WIDTH - margin * 2),
+      y: margin + Math.random() * (MAP_HEIGHT - margin * 2),
+      color: 'rainbow',
+      value: FOOD_VALUES.rainbow,
+      radius: BONUS_FOOD_RADIUS,
+    };
+    this.food.set(foodItem.id, foodItem);
+    this.bonusFoodCount++;
+  }
+
   collectFood(foodId: string): FoodItem | undefined {
     const item = this.food.get(foodId);
     if (!item) return undefined;
+
+    if (item.color === 'rainbow') {
+      this.bonusFoodCount = Math.max(0, this.bonusFoodCount - 1);
+    }
 
     this.food.delete(foodId);
 

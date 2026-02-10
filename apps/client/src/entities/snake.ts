@@ -56,17 +56,25 @@ export class Snake {
   }
 
   updateFromState(state: SnakeState): void {
+    // Scale snake based on length (grows bigger as it eats)
+    const sizeMultiplier = Math.min(2.0, 1.0 + state.length * 0.003);
+
     // Update head
     if (state.segments.length > 0) {
       this.headSprite.setPosition(state.segments[0].x, state.segments[0].y);
       this.headSprite.setRotation(state.direction);
+      this.headSprite.setScale(sizeMultiplier);
 
-      // Update name position above head
-      this.nameText.setPosition(state.segments[0].x, state.segments[0].y - 30);
+      // Update name position above head (offset scales with size)
+      this.nameText.setPosition(state.segments[0].x, state.segments[0].y - 25 * sizeMultiplier);
 
-      // Update eyes relative to head
-      const eyeOffset = 8;
-      const eyeSpread = 6;
+      // Update eyes relative to head (scale with size)
+      const eyeOffset = 8 * sizeMultiplier;
+      const eyeSpread = 6 * sizeMultiplier;
+      this.eyeLeft.setScale(sizeMultiplier);
+      this.eyeRight.setScale(sizeMultiplier);
+      this.pupilLeft.setScale(sizeMultiplier);
+      this.pupilRight.setScale(sizeMultiplier);
       const headX = state.segments[0].x;
       const headY = state.segments[0].y;
       const cosDir = Math.cos(state.direction);
@@ -107,8 +115,8 @@ export class Snake {
       const seg = state.segments[index + 1];
       if (seg) {
         this.segments[index].setPosition(seg.x, seg.y);
-        const scale = Math.max(0.6, 1 - (index + 1) * 0.005);
-        this.segments[index].setScale(scale);
+        const taper = Math.max(0.6, 1 - (index + 1) * 0.005);
+        this.segments[index].setScale(taper * sizeMultiplier);
       }
     }
 

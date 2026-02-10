@@ -48,6 +48,7 @@ export const FOOD_COLORS: Record<string, number> = {
   green: 0x00e676,
   blue: 0x00d9ff,
   gold: 0xffd600,
+  rainbow: 0xff00ff,
 };
 
 export const SNAKE_SKINS: Record<string, number[]> = {

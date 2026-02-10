@@ -8,7 +8,7 @@ import { Interpolator } from '../physics/interpolator';
 import { PredictionEngine } from '../physics/prediction-engine';
 import { Snake } from '../entities/snake';
 import { FoodPool } from '../entities/food';
-import type { GameState, SnakeState, LeaderboardEntry, PlayerDeathPayload } from '../../../shared/types';
+import type { GameState, SnakeState, LeaderboardEntry, PlayerDeathPayload, FoodItem } from '../../../shared/types';
 
 interface SceneData {
   playerId: string;
@@ -35,6 +35,7 @@ export class GameScene extends Phaser.Scene {
   private boostBar!: Phaser.GameObjects.Graphics;
   private minimapCanvas!: HTMLCanvasElement;
   private killNotification!: Phaser.GameObjects.Text;
+  private latestFoodItems: FoodItem[] = [];
 
   constructor() {
     super({ key: 'GameScene' });
@@ -139,6 +140,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     // Update food
+    this.latestFoodItems = state.food;
     this.foodPool.updateFromState(state.food);
 
     // Update leaderboard HUD
@@ -317,7 +319,20 @@ export class GameScene extends Phaser.Scene {
     const scaleX = 120 / MAP_WIDTH;
     const scaleY = 120 / MAP_HEIGHT;
 
-    // Draw other snakes as small dots
+    // Draw bonus rainbow food as blinking dots
+    for (const item of this.latestFoodItems) {
+      if (item.color === 'rainbow') {
+        ctx.fillStyle = '#FF00FF';
+        ctx.shadowColor = '#FF00FF';
+        ctx.shadowBlur = 6;
+        ctx.beginPath();
+        ctx.arc(item.x * scaleX, item.y * scaleY, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.shadowBlur = 0;
+
+    // Draw snakes as small dots
     for (const [snakeId, entity] of this.snakeEntities) {
       const pos = entity.getHeadPosition();
       const isLocal = snakeId === this.localPlayerId;

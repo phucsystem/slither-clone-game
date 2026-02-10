@@ -34,7 +34,7 @@ export interface FoodItem {
   radius: number;
 }
 
-export type FoodColor = 'white' | 'green' | 'blue' | 'gold';
+export type FoodColor = 'white' | 'green' | 'blue' | 'gold' | 'rainbow';
 
 export interface RoomInfo {
   roomId: string;
