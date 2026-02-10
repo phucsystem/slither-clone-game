@@ -1,0 +1,360 @@
+<!--
+  Screen: S-03 Death Screen (Post-Game Stats & Monetization)
+  CJX Stage: Retention, Expansion
+  FR Mapping: FR-06, FR-08
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SNAKE.IO - Game Over</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="components.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: var(--color-bg-primary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .blurred-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(10, 14, 26, 0.95), rgba(21, 27, 46, 0.95));
+      backdrop-filter: blur(20px);
+      z-index: 0;
+    }
+
+    .death-container {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 700px;
+      width: 90%;
+      animation: fadeIn 300ms ease-out;
+    }
+
+    .death-modal {
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: var(--space-2xl);
+    }
+
+    .death-header {
+      font-family: var(--font-display);
+      font-size: var(--text-display);
+      color: var(--color-danger);
+      text-shadow: var(--glow-danger);
+      margin-bottom: var(--space-xl);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-lg);
+      margin-top: var(--space-lg);
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-md);
+      background: var(--color-bg-tertiary);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border);
+    }
+
+    .stat-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: var(--text-body);
+      color: var(--color-text-secondary);
+    }
+
+    .stat-icon {
+      font-size: var(--text-h3);
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: var(--text-h3);
+      color: var(--color-primary);
+      font-weight: 700;
+    }
+
+    .ad-container {
+      background: var(--color-bg-tertiary);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-2xl);
+      position: relative;
+      min-height: 360px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ad-placeholder {
+      color: var(--color-text-muted);
+      font-size: var(--text-body);
+      text-align: center;
+    }
+
+    .skip-ad-btn {
+      position: absolute;
+      top: var(--space-sm);
+      right: var(--space-sm);
+      background: rgba(0, 0, 0, 0.7);
+      color: var(--color-text-primary);
+      border: 1px solid var(--color-border);
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-small);
+      cursor: pointer;
+      display: none;
+    }
+
+    .skip-ad-btn.visible {
+      display: block;
+    }
+
+    .skip-ad-btn:hover {
+      background: rgba(0, 0, 0, 0.9);
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+
+    .secondary-links {
+      display: flex;
+      gap: var(--space-lg);
+      justify-content: center;
+      font-size: var(--text-body);
+    }
+
+    .secondary-links a {
+      color: var(--color-secondary);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+
+    .secondary-links a:hover {
+      color: var(--color-primary);
+      text-decoration: underline;
+    }
+
+    .skin-upsell {
+      margin-top: var(--space-xl);
+      padding: var(--space-lg);
+      background: var(--color-bg-tertiary);
+      border: 1px solid var(--color-primary);
+      border-radius: var(--radius-md);
+      box-shadow: var(--glow-primary);
+    }
+
+    .skin-upsell-title {
+      font-size: var(--text-h4);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-md);
+    }
+
+    .skin-preview-large {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 0 auto var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--color-primary), var(--skin-orange));
+      box-shadow: var(--glow-primary);
+    }
+
+    @media (max-width: 1400px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="cjx-retention">
+  <div class="blurred-background"></div>
+
+  <div class="death-container" data-cjx-entrance>
+    <!-- Death Stats Modal -->
+    <div class="death-modal">
+      <div class="death-header">💀 YOU DIED</div>
+
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-label">
+            <span class="stat-icon">🏆</span>
+            <span>Final Rank</span>
+          </div>
+          <div class="stat-value">#12 / 47</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-label">
+            <span class="stat-icon">⚔️</span>
+            <span>Kills</span>
+          </div>
+          <div class="stat-value">8</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-label">
+            <span class="stat-icon">📏</span>
+            <span>Max Length</span>
+          </div>
+          <div class="stat-value">423</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-label">
+            <span class="stat-icon">⏱️</span>
+            <span>Time Alive</span>
+          </div>
+          <div class="stat-value">4:32</div>
+        </div>
+      </div>
+
+      <div style="margin-top: var(--space-xl); padding-top: var(--space-lg); border-top: 1px solid var(--color-border);">
+        <div style="font-size: var(--text-small); color: var(--color-text-muted); margin-bottom: var(--space-xs);">Total Score</div>
+        <div style="font-family: var(--font-display); font-size: 40px; color: var(--color-primary); text-shadow: var(--glow-primary);">1,847</div>
+      </div>
+    </div>
+
+    <!-- Video Ad Container (Phase 2) -->
+    <div class="ad-container">
+      <div class="ad-placeholder">
+        <div style="font-size: 48px; margin-bottom: var(--space-md);">📺</div>
+        <div>Video Ad Container</div>
+        <div style="font-size: var(--text-small); margin-top: var(--space-sm);">(640x360px - Google AdSense)</div>
+        <div style="margin-top: var(--space-md); color: var(--color-text-secondary);">
+          Ad will play automatically on death<br>
+          Skip button appears after 5 seconds
+        </div>
+      </div>
+      <button class="skip-ad-btn" id="skip-ad-btn">Skip Ad (5s)</button>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <a href="s02-game.html" class="btn btn-primary btn-large">▶ PLAY AGAIN</a>
+    </div>
+
+    <!-- Secondary Links -->
+    <div class="secondary-links">
+      <a href="s04-leaderboards.html">View Leaderboards</a>
+      <a href="#" data-modal-trigger="skins-modal">Unlock Skins</a>
+    </div>
+
+    <!-- Skin Upsell (Phase 2) -->
+    <div class="skin-upsell">
+      <div class="skin-upsell-title">🔥 Unlock Fire Snake!</div>
+      <div class="skin-preview-large">
+        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--color-primary), var(--skin-orange)); border-radius: 50%;"></div>
+      </div>
+      <div style="font-size: var(--text-body); color: var(--color-text-secondary); margin-bottom: var(--space-md);">
+        Stand out with this premium animated skin
+      </div>
+      <button class="btn btn-primary">Purchase for $2.99</button>
+    </div>
+  </div>
+
+  <!-- Skins Modal -->
+  <div id="skins-modal" class="modal-overlay" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Premium Skins</h2>
+        <button class="modal-close" data-modal-close aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-lg);">
+          <div style="text-align: center; padding: var(--space-lg); background: var(--color-bg-tertiary); border-radius: var(--radius-md);">
+            <div style="width: 80px; height: 80px; border-radius: 50%; margin: 0 auto var(--space-md); background: var(--skin-purple);"></div>
+            <div style="font-weight: 600; margin-bottom: var(--space-xs); color: var(--color-text-primary);">Purple Snake</div>
+            <div style="font-size: var(--text-h3); color: var(--color-primary); margin-bottom: var(--space-md);">$0.99</div>
+            <button class="btn btn-primary btn-sm" style="width: 100%;">Purchase</button>
+          </div>
+
+          <div style="text-align: center; padding: var(--space-lg); background: var(--color-bg-tertiary); border-radius: var(--radius-md);">
+            <div style="width: 80px; height: 80px; border-radius: 50%; margin: 0 auto var(--space-md); background: var(--skin-gold);"></div>
+            <div style="font-weight: 600; margin-bottom: var(--space-xs); color: var(--color-text-primary);">Gold Snake</div>
+            <div style="font-size: var(--text-h3); color: var(--color-primary); margin-bottom: var(--space-md);">$1.99</div>
+            <button class="btn btn-primary btn-sm" style="width: 100%;">Purchase</button>
+          </div>
+
+          <div style="text-align: center; padding: var(--space-lg); background: var(--color-bg-tertiary); border-radius: var(--radius-md);">
+            <div style="width: 80px; height: 80px; border-radius: 50%; margin: 0 auto var(--space-md); background: linear-gradient(135deg, var(--color-primary), var(--skin-orange));"></div>
+            <div style="font-weight: 600; margin-bottom: var(--space-xs); color: var(--color-text-primary);">Fire Snake</div>
+            <div style="font-size: var(--text-h3); color: var(--color-primary); margin-bottom: var(--space-md);">$2.99</div>
+            <button class="btn btn-primary btn-sm" style="width: 100%;">Purchase</button>
+          </div>
+
+          <div style="text-align: center; padding: var(--space-lg); background: var(--color-bg-tertiary); border-radius: var(--radius-md);">
+            <div style="width: 80px; height: 80px; border-radius: 50%; margin: 0 auto var(--space-md); background: linear-gradient(135deg, var(--color-accent-neon), var(--color-secondary));"></div>
+            <div style="font-weight: 600; margin-bottom: var(--space-xs); color: var(--color-text-primary);">Neon Snake</div>
+            <div style="font-size: var(--text-h3); color: var(--color-primary); margin-bottom: var(--space-md);">$2.99</div>
+            <button class="btn btn-primary btn-sm" style="width: 100%;">Purchase</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="interactions.js"></script>
+  <script>
+    // Simulate ad loading and skip button
+    let adTimer = 5;
+    const skipBtn = document.getElementById('skip-ad-btn');
+
+    // Show skip button after 5 seconds
+    const adInterval = setInterval(() => {
+      adTimer--;
+      if (adTimer <= 0) {
+        skipBtn.textContent = 'Skip Ad';
+        skipBtn.classList.add('visible');
+        clearInterval(adInterval);
+      } else {
+        skipBtn.textContent = `Skip Ad (${adTimer}s)`;
+      }
+    }, 1000);
+
+    // Skip ad functionality
+    skipBtn.addEventListener('click', () => {
+      document.querySelector('.ad-container').style.display = 'none';
+    });
+
+    // Flash red effect on load
+    document.body.style.background = 'var(--color-danger)';
+    setTimeout(() => {
+      document.body.style.transition = 'background 100ms ease-out';
+      document.body.style.background = 'var(--color-bg-primary)';
+    }, 100);
+  </script>
+</body>
+</html>

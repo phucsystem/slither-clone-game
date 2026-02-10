@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./apps/server
+      dockerfile: Dockerfile
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DATABASE_URL=postgresql://snake_user:snake_pass@postgres:5432/snake_game
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=dev-secret-key
+    volumes:
+      - ./apps/server/src:/app/src
+      - ./apps/shared:/app/../shared
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+
+  adminer:
+    profiles: []

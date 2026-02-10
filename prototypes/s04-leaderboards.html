@@ -1,0 +1,468 @@
+<!--
+  Screen: S-04 Leaderboards (Global & Regional Rankings)
+  CJX Stage: Expansion
+  FR Mapping: FR-12, FR-13
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SNAKE.IO - Leaderboards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="components.css">
+  <style>
+    .leaderboard-page {
+      min-height: 100vh;
+      padding: var(--space-xl);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .back-button {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: var(--text-body);
+      transition: color var(--transition-fast);
+    }
+
+    .back-button:hover {
+      color: var(--color-text-primary);
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: var(--text-h1);
+      color: var(--color-primary);
+      text-shadow: var(--glow-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .leaderboard-container {
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .rank-top3 {
+      color: var(--skin-gold) !important;
+      font-weight: 700;
+    }
+
+    .rank-column {
+      font-family: var(--font-display);
+      font-size: var(--text-rank);
+    }
+
+    .player-link {
+      color: var(--color-text-primary);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+
+    .player-link:hover {
+      color: var(--color-primary);
+      text-decoration: underline;
+    }
+
+    .current-player-row {
+      background: var(--color-bg-tertiary) !important;
+      border: 2px solid var(--color-secondary);
+      box-shadow: var(--glow-secondary);
+    }
+
+    .kd-good {
+      color: var(--color-success);
+      font-weight: 600;
+    }
+
+    .kd-bad {
+      color: var(--color-danger);
+      font-weight: 600;
+    }
+
+    .kd-neutral {
+      color: var(--color-warning);
+      font-weight: 600;
+    }
+
+    .view-profile-section {
+      text-align: center;
+      margin-top: var(--space-2xl);
+    }
+
+    @media (max-width: 1280px) {
+      .table th:nth-child(4),
+      .table td:nth-child(4) {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body class="cjx-expansion">
+  <div class="leaderboard-page">
+    <!-- Header -->
+    <div class="page-header" data-cjx-entrance>
+      <a href="s01-lobby.html" class="back-button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        <span>Back</span>
+      </a>
+    </div>
+
+    <h1 class="page-title" data-cjx-entrance>
+      <span>🏆</span>
+      <span>LEADERBOARDS</span>
+    </h1>
+
+    <!-- Leaderboard Container -->
+    <div class="leaderboard-container" data-cjx-entrance>
+      <!-- Region Tabs -->
+      <div class="tabs">
+        <button class="tab active" data-tab="global" onclick="CJX.switchTab('global')">Global</button>
+        <button class="tab" data-tab="na" onclick="CJX.switchTab('na')">North America</button>
+        <button class="tab" data-tab="eu" onclick="CJX.switchTab('eu')">Europe</button>
+        <button class="tab" data-tab="asia" onclick="CJX.switchTab('asia')">Asia</button>
+      </div>
+
+      <!-- Global Tab Panel -->
+      <div class="tab-panel" data-tab-panel="global">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">#</th>
+              <th>Player</th>
+              <th style="width: 150px;">Score</th>
+              <th style="width: 120px;">K/D</th>
+              <th style="width: 120px;">Games</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="rank-column rank-top3">1</td>
+              <td><a href="s05-profile.html" class="player-link">ProGamer42</a></td>
+              <td>12,451</td>
+              <td class="kd-good">4.2</td>
+              <td>1,234</td>
+            </tr>
+            <tr>
+              <td class="rank-column rank-top3">2</td>
+              <td><a href="s05-profile.html" class="player-link">SnakeKing</a></td>
+              <td>11,987</td>
+              <td class="kd-good">3.8</td>
+              <td>987</td>
+            </tr>
+            <tr class="current-player-row">
+              <td class="rank-column rank-top3">3</td>
+              <td><a href="s05-profile.html" class="player-link">You</a></td>
+              <td>9,103</td>
+              <td class="kd-good">2.5</td>
+              <td>456</td>
+            </tr>
+            <tr>
+              <td class="rank-column">4</td>
+              <td><a href="s05-profile.html" class="player-link">SpeedDemon</a></td>
+              <td>8,876</td>
+              <td class="kd-good">2.8</td>
+              <td>643</td>
+            </tr>
+            <tr>
+              <td class="rank-column">5</td>
+              <td><a href="s05-profile.html" class="player-link">NeonViper</a></td>
+              <td>8,543</td>
+              <td class="kd-good">2.3</td>
+              <td>521</td>
+            </tr>
+            <tr>
+              <td class="rank-column">6</td>
+              <td><a href="s05-profile.html" class="player-link">QuickSnake</a></td>
+              <td>8,234</td>
+              <td class="kd-neutral">1.9</td>
+              <td>489</td>
+            </tr>
+            <tr>
+              <td class="rank-column">7</td>
+              <td><a href="s05-profile.html" class="player-link">FastBoi</a></td>
+              <td>7,987</td>
+              <td class="kd-neutral">1.7</td>
+              <td>412</td>
+            </tr>
+            <tr>
+              <td class="rank-column">8</td>
+              <td><a href="s05-profile.html" class="player-link">SlitherMaster</a></td>
+              <td>7,654</td>
+              <td class="kd-neutral">1.5</td>
+              <td>378</td>
+            </tr>
+            <tr>
+              <td class="rank-column">9</td>
+              <td><a href="s05-profile.html" class="player-link">GamerGirl</a></td>
+              <td>7,432</td>
+              <td class="kd-neutral">1.4</td>
+              <td>356</td>
+            </tr>
+            <tr>
+              <td class="rank-column">10</td>
+              <td><a href="s05-profile.html" class="player-link">ChillPlayer</a></td>
+              <td>7,198</td>
+              <td class="kd-neutral">1.2</td>
+              <td>334</td>
+            </tr>
+            <tr>
+              <td class="rank-column">11</td>
+              <td><a href="s05-profile.html" class="player-link">PixelWarrior</a></td>
+              <td>6,987</td>
+              <td class="kd-neutral">1.1</td>
+              <td>312</td>
+            </tr>
+            <tr>
+              <td class="rank-column">12</td>
+              <td><a href="s05-profile.html" class="player-link">NightHunter</a></td>
+              <td>6,765</td>
+              <td class="kd-bad">0.9</td>
+              <td>298</td>
+            </tr>
+            <tr>
+              <td class="rank-column">13</td>
+              <td><a href="s05-profile.html" class="player-link">CyberSnake</a></td>
+              <td>6,543</td>
+              <td class="kd-bad">0.8</td>
+              <td>276</td>
+            </tr>
+            <tr>
+              <td class="rank-column">14</td>
+              <td><a href="s05-profile.html" class="player-link">ZeroGravity</a></td>
+              <td>6,321</td>
+              <td class="kd-neutral">1.3</td>
+              <td>254</td>
+            </tr>
+            <tr>
+              <td class="rank-column">15</td>
+              <td><a href="s05-profile.html" class="player-link">ThunderBolt</a></td>
+              <td>6,098</td>
+              <td class="kd-good">2.1</td>
+              <td>232</td>
+            </tr>
+            <tr>
+              <td class="rank-column">16</td>
+              <td><a href="s05-profile.html" class="player-link">SilentStrike</a></td>
+              <td>5,876</td>
+              <td class="kd-neutral">1.6</td>
+              <td>210</td>
+            </tr>
+            <tr>
+              <td class="rank-column">17</td>
+              <td><a href="s05-profile.html" class="player-link">IronFang</a></td>
+              <td>5,654</td>
+              <td class="kd-neutral">1.4</td>
+              <td>198</td>
+            </tr>
+            <tr>
+              <td class="rank-column">18</td>
+              <td><a href="s05-profile.html" class="player-link">BlazeFury</a></td>
+              <td>5,432</td>
+              <td class="kd-good">2.0</td>
+              <td>186</td>
+            </tr>
+            <tr>
+              <td class="rank-column">19</td>
+              <td><a href="s05-profile.html" class="player-link">MysticShadow</a></td>
+              <td>5,210</td>
+              <td class="kd-neutral">1.7</td>
+              <td>174</td>
+            </tr>
+            <tr>
+              <td class="rank-column">20</td>
+              <td><a href="s05-profile.html" class="player-link">CosmicVenom</a></td>
+              <td>4,987</td>
+              <td class="kd-neutral">1.5</td>
+              <td>162</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- North America Tab Panel -->
+      <div class="tab-panel" data-tab-panel="na" style="display: none;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">#</th>
+              <th>Player</th>
+              <th style="width: 150px;">Score</th>
+              <th style="width: 120px;">K/D</th>
+              <th style="width: 120px;">Games</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="rank-column rank-top3">1</td>
+              <td><a href="s05-profile.html" class="player-link">USA_Champ</a></td>
+              <td>11,234</td>
+              <td class="kd-good">3.9</td>
+              <td>1,045</td>
+            </tr>
+            <tr>
+              <td class="rank-column rank-top3">2</td>
+              <td><a href="s05-profile.html" class="player-link">CanadianSnake</a></td>
+              <td>10,567</td>
+              <td class="kd-good">3.5</td>
+              <td>892</td>
+            </tr>
+            <tr>
+              <td class="rank-column rank-top3">3</td>
+              <td><a href="s05-profile.html" class="player-link">MexicoKing</a></td>
+              <td>9,876</td>
+              <td class="kd-good">3.2</td>
+              <td>765</td>
+            </tr>
+            <tr class="current-player-row">
+              <td class="rank-column">4</td>
+              <td><a href="s05-profile.html" class="player-link">You</a></td>
+              <td>9,103</td>
+              <td class="kd-good">2.5</td>
+              <td>456</td>
+            </tr>
+            <tr>
+              <td class="rank-column">5</td>
+              <td><a href="s05-profile.html" class="player-link">NorthernStar</a></td>
+              <td>8,543</td>
+              <td class="kd-good">2.3</td>
+              <td>521</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Europe Tab Panel -->
+      <div class="tab-panel" data-tab-panel="eu" style="display: none;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">#</th>
+              <th>Player</th>
+              <th style="width: 150px;">Score</th>
+              <th style="width: 120px;">K/D</th>
+              <th style="width: 120px;">Games</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="rank-column rank-top3">1</td>
+              <td><a href="s05-profile.html" class="player-link">EuroChamp</a></td>
+              <td>12,890</td>
+              <td class="kd-good">4.5</td>
+              <td>1,456</td>
+            </tr>
+            <tr>
+              <td class="rank-column rank-top3">2</td>
+              <td><a href="s05-profile.html" class="player-link">UKSniper</a></td>
+              <td>11,234</td>
+              <td class="kd-good">4.0</td>
+              <td>1,123</td>
+            </tr>
+            <tr>
+              <td class="rank-column rank-top3">3</td>
+              <td><a href="s05-profile.html" class="player-link">FrenchViper</a></td>
+              <td>10,567</td>
+              <td class="kd-good">3.7</td>
+              <td>987</td>
+            </tr>
+            <tr>
+              <td class="rank-column">4</td>
+              <td><a href="s05-profile.html" class="player-link">GermanTank</a></td>
+              <td>9,876</td>
+              <td class="kd-good">3.4</td>
+              <td>854</td>
+            </tr>
+            <tr>
+              <td class="rank-column">5</td>
+              <td><a href="s05-profile.html" class="player-link">NordicKing</a></td>
+              <td>9,234</td>
+              <td class="kd-good">3.1</td>
+              <td>723</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Asia Tab Panel -->
+      <div class="tab-panel" data-tab-panel="asia" style="display: none;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">#</th>
+              <th>Player</th>
+              <th style="width: 150px;">Score</th>
+              <th style="width: 120px;">K/D</th>
+              <th style="width: 120px;">Games</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="rank-column rank-top3">1</td>
+              <td><a href="s05-profile.html" class="player-link">AsianLegend</a></td>
+              <td>13,456</td>
+              <td class="kd-good">5.2</td>
+              <td>1,678</td>
+            </tr>
+            <tr>
+              <td class="rank-column rank-top3">2</td>
+              <td><a href="s05-profile.html" class="player-link">TokyoDrifter</a></td>
+              <td>12,234</td>
+              <td class="kd-good">4.8</td>
+              <td>1,432</td>
+            </tr>
+            <tr>
+              <td class="rank-column rank-top3">3</td>
+              <td><a href="s05-profile.html" class="player-link">SeoulSnake</a></td>
+              <td>11,567</td>
+              <td class="kd-good">4.5</td>
+              <td>1,234</td>
+            </tr>
+            <tr>
+              <td class="rank-column">4</td>
+              <td><a href="s05-profile.html" class="player-link">SingaporeAce</a></td>
+              <td>10,876</td>
+              <td class="kd-good">4.2</td>
+              <td>1,098</td>
+            </tr>
+            <tr>
+              <td class="rank-column">5</td>
+              <td><a href="s05-profile.html" class="player-link">DragonKing</a></td>
+              <td>10,234</td>
+              <td class="kd-good">3.9</td>
+              <td>956</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- View Profile Button -->
+    <div class="view-profile-section" data-cjx-entrance>
+      <a href="s05-profile.html" class="btn btn-primary">View My Profile</a>
+    </div>
+  </div>
+
+  <script src="interactions.js"></script>
+</body>
+</html>

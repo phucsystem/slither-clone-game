@@ -1,0 +1,168 @@
+/*
+ * Design Tokens - Vibrant Competitive Style
+ * Generated from docs/UI_SPEC.md
+ */
+
+:root {
+  /* Primary Colors (Competitive Accent) */
+  --color-primary: #FF3366;
+  --color-primary-dark: #CC0033;
+  --color-primary-light: #FF6699;
+  --color-secondary: #00D9FF;
+  --color-accent-neon: #39FF14;
+
+  /* Semantic Colors */
+  --color-success: #00E676;
+  --color-warning: #FFD600;
+  --color-danger: #FF1744;
+  --color-info: #00B8D4;
+
+  /* Neutral Greys (Dark Theme) */
+  --color-bg-primary: #0A0E1A;
+  --color-bg-secondary: #151B2E;
+  --color-bg-tertiary: #1E2842;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #B0B8D4;
+  --color-text-muted: #6B7394;
+  --color-border: #2D3654;
+  --color-border-glow: #4A5580;
+
+  /* Gameplay Colors (Snake Skins) */
+  --skin-default: #4A90E2;
+  --skin-green: #50E3C2;
+  --skin-orange: #FF9500;
+  --skin-purple: #BD10E0;
+  --skin-gold: #FFD700;
+  --skin-shadow: #1A1A2E;
+
+  /* Food Colors */
+  --food-white: #FFFFFF;
+  --food-green: #50E3C2;
+  --food-blue: #4A90E2;
+  --food-gold: #FFD700;
+
+  /* Typography */
+  --font-primary: 'Rajdhani', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Orbitron', 'Rajdhani', monospace;
+
+  /* Type Scale */
+  --text-display: 48px;
+  --text-h1: 36px;
+  --text-h2: 28px;
+  --text-h3: 22px;
+  --text-h4: 18px;
+  --text-body: 16px;
+  --text-small: 14px;
+  --text-caption: 12px;
+  --text-score: 32px;
+  --text-rank: 24px;
+
+  /* Spacing Scale (Base: 4px) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+
+  /* Glows */
+  --glow-primary: 0 0 20px rgba(255, 51, 102, 0.6);
+  --glow-secondary: 0 0 20px rgba(0, 217, 255, 0.6);
+  --glow-neon: 0 0 30px rgba(57, 255, 20, 0.8);
+  --glow-danger: 0 0 20px rgba(255, 23, 68, 0.7);
+
+  /* Animation Timings */
+  --transition-fast: 150ms ease-out;
+  --transition-base: 300ms ease-in-out;
+  --transition-slow: 500ms ease-in-out;
+}
+
+/* Global Resets */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  background: var(--color-bg-primary);
+  overflow-x: hidden;
+}
+
+/* Display Font for Headers */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+h1 { font-size: var(--text-h1); line-height: 1.2; }
+h2 { font-size: var(--text-h2); line-height: 1.3; }
+h3 { font-size: var(--text-h3); line-height: 1.4; }
+h4 { font-size: var(--text-h4); line-height: 1.4; }
+
+/* Layout System */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 280px;
+  background: var(--color-bg-secondary);
+  border-right: 1px solid var(--color-border);
+  padding: var(--space-lg);
+  flex-shrink: 0;
+}
+
+.main-content {
+  flex: 1;
+  padding: var(--space-xl);
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+.hide-mobile {
+  display: block;
+}
+
+@media (max-width: 1280px) {
+  .hide-mobile {
+    display: none;
+  }
+}
+
+/* Utility Classes */
+.text-center { text-align: center; }
+.text-muted { color: var(--color-text-muted); }
+.text-secondary { color: var(--color-text-secondary); }
+
+/* Focus States */
+*:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

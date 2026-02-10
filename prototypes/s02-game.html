@@ -1,0 +1,560 @@
+<!--
+  Screen: S-02 Game (Real-Time Gameplay Canvas)
+  CJX Stage: Onboarding, Usage
+  FR Mapping: FR-02, FR-03, FR-04, FR-05, FR-07, FR-14
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SNAKE.IO - Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="components.css">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #game-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--color-bg-primary);
+    }
+
+    .hud-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .hud-overlay > * {
+      pointer-events: auto;
+    }
+
+    .leaderboard-overlay {
+      position: absolute;
+      top: var(--space-lg);
+      left: var(--space-lg);
+      background: rgba(21, 27, 46, 0.85);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      min-width: 250px;
+      backdrop-filter: blur(10px);
+    }
+
+    .leaderboard-title {
+      font-family: var(--font-display);
+      font-size: var(--text-h4);
+      color: var(--color-primary);
+      margin-bottom: var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .leaderboard-list {
+      list-style: none;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-xs) 0;
+      font-size: var(--text-small);
+      color: var(--color-text-secondary);
+    }
+
+    .leaderboard-item.current-player {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .leaderboard-rank {
+      font-family: var(--font-display);
+      margin-right: var(--space-sm);
+      min-width: 20px;
+    }
+
+    .leaderboard-rank.top3 {
+      color: var(--skin-gold);
+    }
+
+    .minimap {
+      position: absolute;
+      top: var(--space-lg);
+      right: calc(var(--space-lg) + 50px);
+      width: 120px;
+      height: 120px;
+      background: rgba(21, 27, 46, 0.85);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      backdrop-filter: blur(10px);
+    }
+
+    .settings-gear {
+      position: absolute;
+      top: var(--space-lg);
+      right: var(--space-lg);
+    }
+
+    .boost-ui {
+      position: absolute;
+      bottom: var(--space-lg);
+      left: var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      background: rgba(21, 27, 46, 0.85);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border);
+      backdrop-filter: blur(10px);
+    }
+
+    .boost-label {
+      font-size: var(--text-small);
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .boost-bar {
+      width: 200px;
+      height: 20px;
+      background: var(--color-bg-tertiary);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .boost-fill {
+      height: 100%;
+      background: var(--color-primary);
+      box-shadow: var(--glow-primary);
+      transition: width 0.1s linear;
+    }
+
+    .boost-percentage {
+      font-family: var(--font-display);
+      font-size: var(--text-small);
+      color: var(--color-text-primary);
+      min-width: 40px;
+      text-align: right;
+    }
+
+    .score-display {
+      position: absolute;
+      bottom: var(--space-lg);
+      right: var(--space-lg);
+      background: rgba(21, 27, 46, 0.85);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border);
+      backdrop-filter: blur(10px);
+    }
+
+    .score-label {
+      font-size: var(--text-small);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .score-value {
+      font-family: var(--font-display);
+      font-size: var(--text-score);
+      color: var(--color-primary);
+      text-shadow: var(--glow-primary);
+    }
+
+    .kill-notification {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-display);
+      font-size: var(--text-h2);
+      color: var(--color-accent-neon);
+      text-shadow: var(--glow-neon);
+      animation: killPopup 2s ease-out forwards;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    @keyframes killPopup {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+      }
+      20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -100px) scale(1);
+      }
+    }
+
+    .pause-modal {
+      display: none;
+    }
+
+    .pause-modal.active {
+      display: flex;
+    }
+  </style>
+</head>
+<body class="cjx-usage">
+  <!-- Game Canvas -->
+  <canvas id="game-canvas"></canvas>
+
+  <!-- HUD Overlay -->
+  <div class="hud-overlay">
+    <!-- Leaderboard Overlay -->
+    <div class="leaderboard-overlay" data-cjx-entrance>
+      <div class="leaderboard-title">
+        <span>🏆</span>
+        <span>LEADERBOARD</span>
+      </div>
+      <ul class="leaderboard-list">
+        <li class="leaderboard-item">
+          <div>
+            <span class="leaderboard-rank top3">1.</span>
+            <span>ProGamer42</span>
+          </div>
+          <div>2451</div>
+        </li>
+        <li class="leaderboard-item current-player">
+          <div>
+            <span class="leaderboard-rank">2.</span>
+            <span>You ←</span>
+          </div>
+          <div>2103</div>
+        </li>
+        <li class="leaderboard-item">
+          <div>
+            <span class="leaderboard-rank">3.</span>
+            <span>SnakeKing</span>
+          </div>
+          <div>1987</div>
+        </li>
+        <li class="leaderboard-item">
+          <div>
+            <span class="leaderboard-rank">4.</span>
+            <span>PlayerX</span>
+          </div>
+          <div>1856</div>
+        </li>
+        <li class="leaderboard-item">
+          <div>
+            <span class="leaderboard-rank">5.</span>
+            <span>QuickSnake</span>
+          </div>
+          <div>1723</div>
+        </li>
+        <li class="leaderboard-item">
+          <div>
+            <span class="leaderboard-rank">6.</span>
+            <span>NeonViper</span>
+          </div>
+          <div>1654</div>
+        </li>
+        <li class="leaderboard-item">
+          <div>
+            <span class="leaderboard-rank">7.</span>
+            <span>FastBoi</span>
+          </div>
+          <div>1598</div>
+        </li>
+        <li class="leaderboard-item">
+          <div>
+            <span class="leaderboard-rank">8.</span>
+            <span>SlitherMaster</span>
+          </div>
+          <div>1432</div>
+        </li>
+        <li class="leaderboard-item">
+          <div>
+            <span class="leaderboard-rank">9.</span>
+            <span>GamerGirl</span>
+          </div>
+          <div>1387</div>
+        </li>
+        <li class="leaderboard-item">
+          <div>
+            <span class="leaderboard-rank">10.</span>
+            <span>ChillPlayer</span>
+          </div>
+          <div>1256</div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Minimap -->
+    <div class="minimap" data-cjx-entrance>
+      <svg width="120" height="120" viewBox="0 0 120 120">
+        <!-- Map boundary -->
+        <rect x="10" y="10" width="100" height="100" fill="var(--color-bg-primary)" stroke="var(--color-border)" stroke-width="1"/>
+        <!-- Player dots -->
+        <circle cx="60" cy="60" r="3" fill="var(--color-primary)"/>
+        <circle cx="40" cy="30" r="2" fill="var(--color-text-muted)"/>
+        <circle cx="80" cy="50" r="2" fill="var(--color-text-muted)"/>
+        <circle cx="50" cy="80" r="2" fill="var(--color-text-muted)"/>
+        <circle cx="90" cy="70" r="2" fill="var(--color-text-muted)"/>
+      </svg>
+    </div>
+
+    <!-- Settings Gear -->
+    <button class="icon-btn settings-gear" data-modal-trigger="pause-modal" data-cjx-entrance>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M12 1v6m0 6v6m5.2-13.2l-4.2 4.2m0 6l4.2 4.2M1 12h6m6 0h6m-13.2 5.2l4.2-4.2m0-6l-4.2-4.2"/>
+      </svg>
+    </button>
+
+    <!-- Boost UI -->
+    <div class="boost-ui" data-cjx-entrance>
+      <div class="boost-label">
+        <span>⚡</span>
+        <span>Boost:</span>
+      </div>
+      <div class="boost-bar">
+        <div class="boost-fill" id="boost-fill" style="width: 60%;"></div>
+      </div>
+      <div class="boost-percentage" id="boost-percentage">60%</div>
+    </div>
+
+    <!-- Score Display -->
+    <div class="score-display" data-cjx-entrance>
+      <div class="score-label">Score</div>
+      <div class="score-value" id="score-value">2103</div>
+    </div>
+
+    <!-- Kill Notification (hidden by default) -->
+    <div class="kill-notification" id="kill-notification">+1 KILL</div>
+  </div>
+
+  <!-- Pause Modal -->
+  <div id="pause-modal" class="modal-overlay pause-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Game Paused</h2>
+        <button class="modal-close" data-modal-close aria-label="Close">×</button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <button class="btn btn-primary" data-modal-close style="margin-bottom: var(--space-md); width: 100%;">Resume Game</button>
+        <a href="s01-lobby.html" class="btn btn-secondary" style="width: 100%; display: inline-block;">Exit to Lobby</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="interactions.js"></script>
+  <script>
+    // Game Canvas Setup
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas size
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Grid background
+    function drawGrid() {
+      ctx.strokeStyle = 'rgba(45, 54, 84, 0.3)';
+      ctx.lineWidth = 1;
+
+      const gridSize = 50;
+      for (let x = 0; x < canvas.width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+
+      for (let y = 0; y < canvas.height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+    }
+
+    // Draw food particles
+    function drawFood() {
+      const foodPositions = [
+        { x: 200, y: 150, color: '#FFFFFF', size: 8 },
+        { x: 400, y: 300, color: '#50E3C2', size: 8 },
+        { x: 600, y: 200, color: '#4A90E2', size: 8 },
+        { x: 800, y: 400, color: '#FFFFFF', size: 8 },
+        { x: 300, y: 500, color: '#FFD700', size: 10 }, // Gold (rare)
+        { x: 900, y: 250, color: '#FFFFFF', size: 8 },
+        { x: 500, y: 450, color: '#50E3C2', size: 8 },
+        { x: 700, y: 350, color: '#4A90E2', size: 8 },
+      ];
+
+      foodPositions.forEach(food => {
+        // Glow effect
+        ctx.shadowColor = food.color;
+        ctx.shadowBlur = 15;
+
+        ctx.fillStyle = food.color;
+        ctx.beginPath();
+        ctx.arc(food.x, food.y, food.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+      });
+    }
+
+    // Draw snake
+    function drawSnake(x, y, color = '#4A90E2', segments = 15) {
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 20;
+
+      // Body segments
+      for (let i = segments; i >= 0; i--) {
+        const segmentX = x - (i * 15);
+        const segmentY = y + Math.sin((Date.now() / 200) + i * 0.3) * 10;
+        const size = 20 - (i * 0.3);
+
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(segmentX, segmentY, size / 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Eyes on head
+        if (i === 0) {
+          ctx.fillStyle = 'white';
+          ctx.beginPath();
+          ctx.arc(segmentX - 4, segmentY - 3, 2, 0, Math.PI * 2);
+          ctx.arc(segmentX + 4, segmentY - 3, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      ctx.shadowBlur = 0;
+    }
+
+    // Draw other players
+    function drawOtherPlayers() {
+      drawSnake(300, 200, '#50E3C2', 10);
+      drawSnake(700, 400, '#FF9500', 8);
+      drawSnake(900, 300, '#BD10E0', 12);
+    }
+
+    // Animation loop
+    let playerX = 400;
+    let playerY = 300;
+    let mouseX = 400;
+    let mouseY = 300;
+
+    function animate() {
+      // Clear canvas
+      ctx.fillStyle = '#0A0E1A';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw grid
+      drawGrid();
+
+      // Draw food
+      drawFood();
+
+      // Draw other players
+      drawOtherPlayers();
+
+      // Move player snake toward mouse
+      playerX += (mouseX - playerX) * 0.05;
+      playerY += (mouseY - playerY) * 0.05;
+
+      // Draw player snake
+      drawSnake(playerX, playerY, '#4A90E2', 15);
+
+      requestAnimationFrame(animate);
+    }
+
+    // Mouse movement
+    canvas.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    // Boost simulation (spacebar)
+    let boostLevel = 60;
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && boostLevel > 0) {
+        boostLevel = Math.max(0, boostLevel - 2);
+        updateBoostUI();
+      }
+    });
+
+    // Boost regeneration
+    setInterval(() => {
+      if (boostLevel < 100) {
+        boostLevel = Math.min(100, boostLevel + 0.5);
+        updateBoostUI();
+      }
+    }, 100);
+
+    function updateBoostUI() {
+      const fill = document.getElementById('boost-fill');
+      const percentage = document.getElementById('boost-percentage');
+
+      fill.style.width = boostLevel + '%';
+      percentage.textContent = Math.round(boostLevel) + '%';
+
+      // Color coding
+      if (boostLevel < 20) {
+        fill.style.background = 'var(--color-warning)';
+        fill.style.boxShadow = '0 0 20px rgba(255, 214, 0, 0.6)';
+      } else {
+        fill.style.background = 'var(--color-primary)';
+        fill.style.boxShadow = 'var(--glow-primary)';
+      }
+    }
+
+    // Simulate kill notification (for demo)
+    let score = 2103;
+    setInterval(() => {
+      if (Math.random() > 0.95) {
+        score += Math.floor(Math.random() * 50) + 10;
+        document.getElementById('score-value').textContent = score;
+
+        // Show kill notification
+        const killNotif = document.getElementById('kill-notification');
+        killNotif.style.opacity = '0';
+        killNotif.style.animation = 'none';
+        setTimeout(() => {
+          killNotif.style.animation = 'killPopup 2s ease-out forwards';
+        }, 10);
+      }
+    }, 5000);
+
+    // Start animation
+    animate();
+
+    // Simulate death after 30 seconds (for demo)
+    setTimeout(() => {
+      window.location.href = 's03-death-screen.html';
+    }, 30000);
+  </script>
+</body>
+</html>

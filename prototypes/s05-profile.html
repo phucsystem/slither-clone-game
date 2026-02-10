@@ -1,0 +1,573 @@
+<!--
+  Screen: S-05 Profile (Player Stats & Achievements)
+  CJX Stage: Expansion, Advocacy
+  FR Mapping: FR-13, FR-09, E-01, E-02
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SNAKE.IO - Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="components.css">
+  <style>
+    .profile-page {
+      min-height: 100vh;
+      padding: var(--space-xl);
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .back-button {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: var(--text-body);
+      transition: color var(--transition-fast);
+    }
+
+    .back-button:hover {
+      color: var(--color-text-primary);
+    }
+
+    .profile-layout {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-xl);
+    }
+
+    .profile-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    .avatar-section {
+      text-align: center;
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: var(--color-bg-tertiary);
+      margin: 0 auto var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      border: 3px solid var(--color-border);
+    }
+
+    .username {
+      font-size: var(--text-h2);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-xs);
+      font-weight: 600;
+    }
+
+    .user-rank {
+      font-family: var(--font-display);
+      font-size: var(--text-rank);
+      color: var(--color-primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .user-meta {
+      font-size: var(--text-small);
+      color: var(--color-text-muted);
+    }
+
+    .stats-card {
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .stats-title {
+      font-size: var(--text-h3);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-lg);
+      font-weight: 600;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .stat-row:last-child {
+      border-bottom: none;
+    }
+
+    .stat-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      color: var(--color-text-secondary);
+      font-size: var(--text-body);
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: var(--text-h4);
+      color: var(--color-primary);
+      font-weight: 700;
+    }
+
+    .stat-value.highlight {
+      font-size: var(--text-h2);
+      text-shadow: var(--glow-primary);
+    }
+
+    .kd-good { color: var(--color-success); }
+    .kd-neutral { color: var(--color-warning); }
+    .kd-bad { color: var(--color-danger); }
+
+    .skins-section {
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-md);
+      margin-bottom: var(--space-lg);
+    }
+
+    .section-header {
+      font-size: var(--text-h3);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-lg);
+      font-weight: 600;
+    }
+
+    .skins-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--space-md);
+    }
+
+    .skin-item {
+      text-align: center;
+    }
+
+    .skin-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin: 0 auto var(--space-xs);
+      border: 2px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .skin-circle:hover {
+      transform: scale(1.1);
+      border-color: var(--color-primary);
+    }
+
+    .skin-circle.owned::after {
+      content: '✓';
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 20px;
+      height: 20px;
+      background: var(--color-success);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .skin-circle.locked {
+      opacity: 0.4;
+      filter: grayscale(1);
+    }
+
+    .skin-circle.locked::before {
+      content: '🔒';
+      position: absolute;
+      font-size: 20px;
+    }
+
+    .skin-name {
+      font-size: var(--text-caption);
+      color: var(--color-text-secondary);
+    }
+
+    .session-history {
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .history-table th {
+      text-align: left;
+      padding: var(--space-sm);
+      font-size: var(--text-small);
+      color: var(--color-text-muted);
+      border-bottom: 1px solid var(--color-border);
+      font-weight: 600;
+    }
+
+    .history-table td {
+      padding: var(--space-sm);
+      color: var(--color-text-secondary);
+      border-bottom: 1px solid rgba(45, 54, 84, 0.3);
+    }
+
+    .history-table tbody tr:hover {
+      background: var(--color-bg-tertiary);
+    }
+
+    .rank-best {
+      color: var(--color-success);
+      font-weight: 600;
+    }
+
+    .rank-worst {
+      color: var(--color-danger);
+      font-weight: 600;
+    }
+
+    @media (max-width: 1400px) {
+      .profile-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .skins-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+<body class="cjx-expansion">
+  <div class="profile-page">
+    <!-- Header -->
+    <div class="page-header" data-cjx-entrance>
+      <a href="s01-lobby.html" class="back-button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        <span>Back</span>
+      </a>
+    </div>
+
+    <!-- Profile Layout -->
+    <div class="profile-layout">
+      <!-- Sidebar -->
+      <div class="profile-sidebar" data-cjx-entrance>
+        <div class="stats-card avatar-section">
+          <div class="avatar">👤</div>
+          <div class="username">ProGamer42</div>
+          <div class="user-rank">Rank #1,234</div>
+          <div class="user-meta">Joined: January 2026</div>
+          <div style="margin-top: var(--space-md);">
+            <span class="badge badge-premium">PREMIUM</span>
+          </div>
+        </div>
+
+        <div class="stats-card">
+          <div class="stats-title">📊 STATS</div>
+          <div class="stat-row">
+            <div class="stat-label">
+              <span>⚔️</span>
+              <span>Total Kills</span>
+            </div>
+            <div class="stat-value">1,234</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">
+              <span>💀</span>
+              <span>Total Deaths</span>
+            </div>
+            <div class="stat-value">789</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">
+              <span>📊</span>
+              <span>K/D Ratio</span>
+            </div>
+            <div class="stat-value kd-good">1.56</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">
+              <span>🏆</span>
+              <span>Avg Rank</span>
+            </div>
+            <div class="stat-value">#45</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">
+              <span>⏱️</span>
+              <span>Play Time</span>
+            </div>
+            <div class="stat-value">12h 34m</div>
+          </div>
+          <div class="stat-row" style="padding-top: var(--space-md); margin-top: var(--space-md); border-top: 2px solid var(--color-border);">
+            <div class="stat-label">
+              <span>⭐</span>
+              <span>Best Score</span>
+            </div>
+            <div class="stat-value highlight">5,678</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="profile-main" data-cjx-entrance>
+        <!-- Owned Skins -->
+        <div class="skins-section">
+          <div class="section-header">🎨 OWNED SKINS (5/8)</div>
+          <div class="skins-grid">
+            <div class="skin-item">
+              <div class="skin-circle owned" style="background: var(--skin-default);">
+                <div style="width: 30px; height: 30px; background: var(--skin-default); border-radius: 50%;"></div>
+              </div>
+              <div class="skin-name">Blue</div>
+            </div>
+            <div class="skin-item">
+              <div class="skin-circle owned" style="background: var(--skin-green);">
+                <div style="width: 30px; height: 30px; background: var(--skin-green); border-radius: 50%;"></div>
+              </div>
+              <div class="skin-name">Green</div>
+            </div>
+            <div class="skin-item">
+              <div class="skin-circle owned" style="background: var(--skin-orange);">
+                <div style="width: 30px; height: 30px; background: var(--skin-orange); border-radius: 50%;"></div>
+              </div>
+              <div class="skin-name">Orange</div>
+            </div>
+            <div class="skin-item">
+              <div class="skin-circle owned" style="background: var(--skin-purple);">
+                <div style="width: 30px; height: 30px; background: var(--skin-purple); border-radius: 50%;"></div>
+              </div>
+              <div class="skin-name">Purple</div>
+            </div>
+            <div class="skin-item">
+              <div class="skin-circle owned" style="background: var(--skin-gold);">
+                <div style="width: 30px; height: 30px; background: var(--skin-gold); border-radius: 50%;"></div>
+              </div>
+              <div class="skin-name">Gold</div>
+            </div>
+            <div class="skin-item">
+              <div class="skin-circle locked" style="background: linear-gradient(135deg, var(--color-primary), var(--skin-orange));">
+                <div style="width: 30px; height: 30px; background: linear-gradient(135deg, var(--color-primary), var(--skin-orange)); border-radius: 50%;"></div>
+              </div>
+              <div class="skin-name">Fire</div>
+            </div>
+            <div class="skin-item">
+              <div class="skin-circle locked" style="background: linear-gradient(135deg, var(--color-accent-neon), var(--color-secondary));">
+                <div style="width: 30px; height: 30px; background: linear-gradient(135deg, var(--color-accent-neon), var(--color-secondary)); border-radius: 50%;"></div>
+              </div>
+              <div class="skin-name">Neon</div>
+            </div>
+            <div class="skin-item">
+              <div class="skin-circle locked" style="background: var(--skin-shadow);">
+                <div style="width: 30px; height: 30px; background: var(--skin-shadow); border-radius: 50%;"></div>
+              </div>
+              <div class="skin-name">Shadow</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Session History -->
+        <div class="session-history">
+          <div class="section-header">📜 SESSION HISTORY (Last 20)</div>
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Rank</th>
+                <th>Kills</th>
+                <th>Deaths</th>
+                <th>Duration</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2/10 3:00 PM</td>
+                <td class="rank-best">#12</td>
+                <td>8</td>
+                <td>1</td>
+                <td>4:32</td>
+              </tr>
+              <tr>
+                <td>2/10 2:30 PM</td>
+                <td class="rank-best">#5</td>
+                <td>15</td>
+                <td>1</td>
+                <td>8:12</td>
+              </tr>
+              <tr>
+                <td>2/10 2:00 PM</td>
+                <td>#23</td>
+                <td>6</td>
+                <td>1</td>
+                <td>3:45</td>
+              </tr>
+              <tr>
+                <td>2/10 1:30 PM</td>
+                <td>#18</td>
+                <td>9</td>
+                <td>1</td>
+                <td>5:20</td>
+              </tr>
+              <tr>
+                <td>2/10 1:00 PM</td>
+                <td class="rank-worst">#45</td>
+                <td>3</td>
+                <td>1</td>
+                <td>2:15</td>
+              </tr>
+              <tr>
+                <td>2/10 12:30 PM</td>
+                <td>#15</td>
+                <td>10</td>
+                <td>1</td>
+                <td>6:45</td>
+              </tr>
+              <tr>
+                <td>2/10 12:00 PM</td>
+                <td class="rank-best">#7</td>
+                <td>12</td>
+                <td>1</td>
+                <td>7:30</td>
+              </tr>
+              <tr>
+                <td>2/9 11:30 PM</td>
+                <td>#28</td>
+                <td>5</td>
+                <td>1</td>
+                <td>3:10</td>
+              </tr>
+              <tr>
+                <td>2/9 11:00 PM</td>
+                <td>#32</td>
+                <td>4</td>
+                <td>1</td>
+                <td>2:50</td>
+              </tr>
+              <tr>
+                <td>2/9 10:30 PM</td>
+                <td class="rank-best">#9</td>
+                <td>11</td>
+                <td>1</td>
+                <td>6:15</td>
+              </tr>
+              <tr>
+                <td>2/9 10:00 PM</td>
+                <td>#21</td>
+                <td>7</td>
+                <td>1</td>
+                <td>4:05</td>
+              </tr>
+              <tr>
+                <td>2/9 9:30 PM</td>
+                <td>#17</td>
+                <td>8</td>
+                <td>1</td>
+                <td>5:40</td>
+              </tr>
+              <tr>
+                <td>2/9 9:00 PM</td>
+                <td class="rank-worst">#38</td>
+                <td>4</td>
+                <td>1</td>
+                <td>2:30</td>
+              </tr>
+              <tr>
+                <td>2/9 8:30 PM</td>
+                <td>#14</td>
+                <td>9</td>
+                <td>1</td>
+                <td>5:55</td>
+              </tr>
+              <tr>
+                <td>2/9 8:00 PM</td>
+                <td class="rank-best">#6</td>
+                <td>13</td>
+                <td>1</td>
+                <td>7:20</td>
+              </tr>
+              <tr>
+                <td>2/9 7:30 PM</td>
+                <td>#25</td>
+                <td>6</td>
+                <td>1</td>
+                <td>3:35</td>
+              </tr>
+              <tr>
+                <td>2/9 7:00 PM</td>
+                <td>#19</td>
+                <td>7</td>
+                <td>1</td>
+                <td>4:50</td>
+              </tr>
+              <tr>
+                <td>2/9 6:30 PM</td>
+                <td class="rank-best">#11</td>
+                <td>10</td>
+                <td>1</td>
+                <td>6:05</td>
+              </tr>
+              <tr>
+                <td>2/9 6:00 PM</td>
+                <td>#29</td>
+                <td>5</td>
+                <td>1</td>
+                <td>3:20</td>
+              </tr>
+              <tr>
+                <td>2/9 5:30 PM</td>
+                <td class="rank-best">#8</td>
+                <td>12</td>
+                <td>1</td>
+                <td>7:10</td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="text-align: center; margin-top: var(--space-lg);">
+            <button class="btn btn-secondary">Load More</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="interactions.js"></script>
+</body>
+</html>
